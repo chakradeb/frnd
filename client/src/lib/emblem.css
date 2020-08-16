@@ -1,0 +1,10 @@
+.fa-galactic-senate,
+.fa-galactic-republic,
+.fa-old-republic,
+.fa-jedi-order,
+.fa-mandalorian,
+.fa-sith {
+    margin-left: 8px;
+    color: deepskyblue;
+    font-size: 5vh;
+}
