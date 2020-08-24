@@ -4,6 +4,8 @@ go 1.14
 
 require (
 	github.com/chakradeb/env v1.0.0
+	github.com/gocql/gocql v0.0.0-20200815110948-5378c8f664e9
+	github.com/gorilla/mux v1.7.4
 	github.com/sirupsen/logrus v1.6.0
 	github.com/stretchr/testify v1.6.1
 )

@@ -2,10 +2,10 @@ package config
 
 import (
 	"errors"
-	"github.com/sirupsen/logrus"
 	"os"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -5,22 +5,24 @@ import (
 	"net/http"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/chakradeb/frnd-server/config"
 	"github.com/chakradeb/frnd-server/factory"
-	log "github.com/sirupsen/logrus"
 )
 
 func main() {
 	conf, errs := config.New()
 	if len(errs) > 0 {
 		for _, err := range errs {
-			log.Error(err)
+			log.Errorf("frnd: %s", err)
 		}
 		log.Fatal("Configuration error. Server could not start")
 	}
 
 	f := factory.New(conf)
 	logger := f.Logger()
+	logger.WithFields(conf.ShowConfig()).Debug("frnd: Configuration: ")
 	server := http.Server{
 		Addr:              fmt.Sprintf(":%d", conf.AppPort),
 		Handler:           nil,
@@ -30,7 +32,7 @@ func main() {
 		IdleTimeout:       1 * time.Second,
 		MaxHeaderBytes:    http.DefaultMaxHeaderBytes,
 	}
-	logger.Info("server starting on port", conf.AppPort)
-	logger.WithFields(conf.ShowConfig()).Debug("Configuration: ")
-	logger.Fatal("could not start server: ", server.ListenAndServe())
+	logger.Info("frnd: server starting on port: ", conf.AppPort)
+
+	logger.Fatal("frnd: could not start server: ", server.ListenAndServe())
 }

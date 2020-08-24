@@ -2,18 +2,24 @@ package config
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/chakradeb/env"
 	"github.com/sirupsen/logrus"
 )
 
 type Config struct {
-	AppPort int `env:"PORT" default:"8000"`
-	LogLevel logrus.Level `env:"LOG_LEVEL" default:""`
+	AppPort int
+	LogLevel logrus.Level
+	Hosts []string
+	Keyspace string
 }
 
 type args struct {
 	AppPort int `env:"PORT" default:"8000"`
 	LogLevel string `env:"LOG_LEVEL" default:"info"`
+	Hosts string `env:"DB_HOSTS"`
+	Keyspace string `env:"DB_KEYSPACE"`
 }
 
 func New() (*Config, []error) {
@@ -42,6 +48,8 @@ func newConfig(args *args) (*Config, []error) {
 	conf := &Config{
 		AppPort: args.AppPort,
 		LogLevel: logLevel,
+		Hosts: strings.Split(args.Hosts, ","),
+		Keyspace: args.Keyspace,
 	}
 	return conf, nil
 }
@@ -50,5 +58,7 @@ func (conf Config) ShowConfig() logrus.Fields {
 	return logrus.Fields{
 		"AppPort": conf.AppPort,
 		"LogLevel": conf.LogLevel,
+		"Hosts": conf.Hosts,
+		"Keyspace": conf.Keyspace,
 	}
 }
