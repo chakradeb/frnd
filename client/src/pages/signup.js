@@ -1,10 +1,14 @@
 import React, {Component} from "react";
 
+import SignupAction from "../actions/signup";
+
 class SignupPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
             username: '',
+            email: '',
+            gender: 'select',
             password1: '',
             password2: '',
         };
@@ -12,7 +16,9 @@ class SignupPage extends Component {
     }
 
     submitAction() {
-        window.alert("Signup Successful");
+        if(this.state.password1 === this.state.password2) {
+            SignupAction(this.state.username, this.state.email, this.state.gender, this.state.password1)
+        }
     }
 
     render() {
@@ -27,6 +33,26 @@ class SignupPage extends Component {
                         (e) => this.setState({username: e.target.value})
                     }
                 />
+                <input
+                    id="email"
+                    placeholder="choose a email"
+                    required={true}
+                    onChange={
+                        (e) => this.setState({email: e.target.value})
+                    }
+                />
+                <select
+                    id="gender"
+                    value={this.state.gender}
+                    onChange={
+                        (e) => this.setState({gender: e.target.value})
+                    }
+                >
+                    <option value="select" disabled>Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="prefer not to say">Prefer not to say</option>
+                </select>
                 <input
                     id="password1"
                     type="password"

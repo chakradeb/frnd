@@ -9,7 +9,7 @@ import SignupPage from "../pages/signup";
 
 class LandingPage extends Component {
     componentDidMount() {
-        if(sessionStorage.getItem("auth_key")) window.location.href = "/";
+        if(sessionStorage.getItem("token")) window.location.href = "/";
     }
 
     render() {

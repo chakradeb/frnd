@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -13,6 +14,7 @@ type Config struct {
 	LogLevel logrus.Level
 	Hosts []string
 	Keyspace string
+	AppSecret string
 }
 
 type args struct {
@@ -20,6 +22,7 @@ type args struct {
 	LogLevel string `env:"LOG_LEVEL" default:"info"`
 	Hosts string `env:"DB_HOSTS"`
 	Keyspace string `env:"DB_KEYSPACE"`
+	AppSecret string `env:"APP_SECRET"`
 }
 
 func New() (*Config, []error) {
@@ -41,6 +44,10 @@ func newConfig(args *args) (*Config, []error) {
 		errs = append(errs, fmt.Errorf("config: %s", err))
 	}
 
+	if len(args.AppSecret) < 8 {
+		errs = append(errs, errors.New("config: app secret should be minimum of 8 characters"))
+	}
+
 	if len(errs) > 0 {
 		return nil, errs
 	}
@@ -50,6 +57,7 @@ func newConfig(args *args) (*Config, []error) {
 		LogLevel: logLevel,
 		Hosts: strings.Split(args.Hosts, ","),
 		Keyspace: args.Keyspace,
+		AppSecret: args.AppSecret,
 	}
 	return conf, nil
 }
@@ -60,5 +68,6 @@ func (conf Config) ShowConfig() logrus.Fields {
 		"LogLevel": conf.LogLevel,
 		"Hosts": conf.Hosts,
 		"Keyspace": conf.Keyspace,
+		"AppSecret": "[SECRET]",
 	}
 }

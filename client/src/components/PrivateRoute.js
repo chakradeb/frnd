@@ -7,7 +7,7 @@ const PrivateRoute = function ({children, ...rest}) {
         <Route
             { ...rest }
             render={
-                () => sessionStorage.getItem("auth_key") ? children : <Redirect to="/login"/>
+                () => sessionStorage.getItem("token") ? children : <Redirect to="/login"/>
             }
         />
     );

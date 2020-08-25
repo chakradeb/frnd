@@ -4,22 +4,22 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gocql/gocql"
 	"github.com/sirupsen/logrus"
 
 	"github.com/chakradeb/frnd-server/config"
+	"github.com/chakradeb/frnd-server/db"
 )
 
 type Factory struct {
 	logger *logrus.Logger
-	dbSession *gocql.Session
+	db *db.DB
 }
 
 func New(config *config.Config) *Factory {
 	logger := createLogger(config.LogLevel)
 	return &Factory{
 		logger: logger,
-		dbSession: createDBSession(config.Hosts, config.Keyspace, logger),
+		db: createDBSession(config.Hosts, config.Keyspace, logger),
 	}
 }
 
@@ -27,19 +27,17 @@ func (f Factory) Logger() *logrus.Logger {
 	return f.logger
 }
 
-func (f Factory) DbSession() *gocql.Session {
-	return f.dbSession
+func (f Factory) DB() *db.DB {
+	return f.db
 }
 
-func createDBSession(clusterIPs []string, keyspace string, logger *logrus.Logger) *gocql.Session {
-	cluster := gocql.NewCluster(clusterIPs[:]...)
-	cluster.Keyspace = keyspace
-	session, err := cluster.CreateSession()
+func createDBSession(clusterIPs []string, keyspace string, logger *logrus.Logger) *db.DB {
+	dbConn, err := db.New(clusterIPs, keyspace)
 	if err != nil {
-		logger.WithError(err).Fatalf("factory: connecting to \"%s\"", strings.Join(clusterIPs, ","))
+		logger.Fatalf("factory: %s", err)
 	}
 	logger.Infof("factory: connected to cluster, %s", strings.Join(clusterIPs, ","))
-	return session
+	return dbConn
 }
 
 func createLogger(logLevel logrus.Level) *logrus.Logger {

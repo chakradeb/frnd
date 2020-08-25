@@ -9,6 +9,7 @@ import (
 
 	"github.com/chakradeb/frnd-server/config"
 	"github.com/chakradeb/frnd-server/factory"
+	"github.com/chakradeb/frnd-server/handlers"
 )
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 	logger.WithFields(conf.ShowConfig()).Debug("frnd: Configuration: ")
 	server := http.Server{
 		Addr:              fmt.Sprintf(":%d", conf.AppPort),
-		Handler:           nil,
+		Handler:           handlers.Router(logger, f.DB(), conf.AppSecret),
 		ReadTimeout:       1 * time.Second,
 		ReadHeaderTimeout: 1 * time.Second,
 		WriteTimeout:      1 * time.Second,
