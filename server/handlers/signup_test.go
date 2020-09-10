@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
@@ -26,7 +27,7 @@ func TestSignupHandler(t *testing.T) {
 	Encrypter = func(pwd []byte) (string, error) {
 		return string(pwd), nil
 	}
-	TokenCreator = func(username string, email string, secret string) (string, error) {
+	TokenCreator = func(username string, t time.Time, secret string) (string, error) {
 		return secret, nil
 	}
 
@@ -36,9 +37,8 @@ func TestSignupHandler(t *testing.T) {
 		Password: password,
 		Gender:   "male",
 	}
-	token := &models.Token{
+	token := &models.Session{
 		Username: username,
-		Email: email,
 		Token: appSecret,
 	}
 
@@ -216,7 +216,7 @@ func TestSignupHandlerWhenTokenCreationError(t *testing.T) {
 	Encrypter = func(pwd []byte) (string, error) {
 		return string(pwd), nil
 	}
-	TokenCreator = func(username string, email string, secret string) (string, error) {
+	TokenCreator = func(username string, t time.Time, secret string) (string, error) {
 		return "", errors.New("unknown error")
 	}
 

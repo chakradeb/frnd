@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 
-import SignupAction from "../actions/signup";
+import frndServer from "../apis/frndServer";
 
 class SignupPage extends Component {
     constructor(props) {
@@ -17,7 +17,23 @@ class SignupPage extends Component {
 
     submitAction() {
         if(this.state.password1 === this.state.password2) {
-            SignupAction(this.state.username, this.state.email, this.state.gender, this.state.password1)
+            frndServer.post('/api/signup', {
+                username: this.state.username,
+                email: this.state.email,
+                gender: this.state.gender,
+                password: this.state.password1
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            }).then(function (res) {
+                localStorage.setItem("authToken", res.data.token)
+                localStorage.setItem("username", res.data.username)
+                frndServer.defaults.headers.common["authToken"] = res.data.token
+                window.location.href = "/profile/abc";
+            }).catch(function (err) {
+                console.error("signup failed: ", err)
+            })
         }
     }
 

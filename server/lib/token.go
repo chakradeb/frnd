@@ -8,17 +8,15 @@ import (
 	"github.com/chakradeb/frnd-server/models"
 )
 
-func CreateToken(username string, email string, secret string) (string, error) {
-	t := time.Now()
-	token := &models.Token{
+func CreateToken(username string, t time.Time, secret string) (string, error) {
+	claim := &models.Claims{
 		Username: username,
-		Email:    email,
 		StandardClaims: &jwt.StandardClaims{
 			ExpiresAt: t.Add(time.Minute * 1).Unix(),
 			IssuedAt:  t.Unix(),
 		},
 	}
 
-	signedToken := jwt.NewWithClaims(jwt.GetSigningMethod(jwt.SigningMethodHS256.Name), token)
-	return signedToken.SignedString([]byte(secret))
+	token := jwt.NewWithClaims(jwt.GetSigningMethod(jwt.SigningMethodHS256.Name), claim)
+	return token.SignedString([]byte(secret))
 }

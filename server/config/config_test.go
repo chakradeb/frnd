@@ -12,6 +12,7 @@ import (
 func TestNew(t *testing.T) {
 	_ = os.Setenv("PORT", "5000")
 	_ = os.Setenv("LOG_LEVEL", "info")
+	_ = os.Setenv("APP_SECRET", "abcdefgh")
 	defer os.Clearenv()
 
 	conf, errs := New()
@@ -35,6 +36,7 @@ func TestNewWithInvalidPortValues(t *testing.T) {
 func TestNewWithInvalidLogLevelValue(t *testing.T) {
 	_ = os.Setenv("PORT", "5000")
 	_ = os.Setenv("LOG_LEVEL", "all")
+	_ = os.Setenv("APP_SECRET", "abcdefgh")
 	defer os.Clearenv()
 
 	_, errs := New()
@@ -45,6 +47,7 @@ func TestNewWithInvalidLogLevelValue(t *testing.T) {
 
 func TestNewWithDefaultValue(t *testing.T) {
 	_ = os.Setenv("LOG_LEVEL", "debug")
+	_ = os.Setenv("APP_SECRET", "abcdefgh")
 	defer os.Clearenv()
 
 	conf, errs := New()
@@ -56,6 +59,7 @@ func TestNewWithDefaultValue(t *testing.T) {
 
 func TestConfig_ShowConfig(t *testing.T) {
 	_ = os.Setenv("LOG_LEVEL", "error")
+	_ = os.Setenv("APP_SECRET", "abcdefgh")
 	defer os.Clearenv()
 
 	conf, errs := New()

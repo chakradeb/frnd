@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -58,7 +59,7 @@ func SignupHandler(logger *logrus.Logger, db db.IDBClient, appSecret string) htt
 			return
 		}
 
-		token, err := TokenCreator(user.Username, user.Email, appSecret)
+		token, err := TokenCreator(user.Username, time.Now(), appSecret)
 		if err != nil {
 			msg := fmt.Sprintf("signup: create token: not able to sign token: %s", err)
 			logger.Error(msg)
@@ -66,7 +67,7 @@ func SignupHandler(logger *logrus.Logger, db db.IDBClient, appSecret string) htt
 			return
 		}
 
-		session := models.Token{Username: user.Username, Email: user.Email, Token: token}
+		session := models.Session{Username: user.Username, Token: token}
 		lib.WriteResponse(w, session, http.StatusCreated, logger)
 		return
 	}

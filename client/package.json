@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "main": "src/index.js",
-  "proxy": "http://localhost:8000",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -17,7 +16,8 @@
     "react-tabs": "^3.1.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "APP_ENV=dev & react-scripts start",
+    "prod": "APP_ENV=prod & react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
