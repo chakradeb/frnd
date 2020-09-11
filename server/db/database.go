@@ -5,10 +5,13 @@ import (
 	"strings"
 
 	"github.com/gocql/gocql"
+
+	"github.com/chakradeb/frnd-server/models"
 )
 
 type IDBClient interface {
 	CreateUser (string, string) error
+	GetUser(string) *models.User
 	CheckUserAlreadyExists (string) bool
 }
 
@@ -33,6 +36,17 @@ func (d *DB) CreateUser(username string, password string) error {
 	return d.session.Query(
 		"INSERT INTO user_creds(username, password) VALUES (?, ?)", username, password,
 	).Exec()
+}
+
+func (d *DB) GetUser(username string) *models.User {
+	user := &models.User{}
+	m := map[string]interface{}{}
+	iter := d.session.Query("SELECT * FROM user_creds Where username = ?", username).Iter()
+	for iter.MapScan(m) {
+		user.Username = m["username"].(string)
+		user.Password = m["password"].(string)
+	}
+	return user
 }
 
 func (d *DB) CheckUserAlreadyExists(username string) bool {

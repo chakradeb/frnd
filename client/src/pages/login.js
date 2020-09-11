@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+import frndServer from "../apis/frndServer";
+
 class LoginPage extends Component {
     constructor(props) {
         super(props);
@@ -11,7 +13,21 @@ class LoginPage extends Component {
     }
 
     submitAction() {
-        window.alert("Login Successful");
+        frndServer.post('/api/login', {
+            username: this.state.username,
+            password: this.state.password
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }).then(function (res) {
+            localStorage.setItem("authToken", res.data.token)
+            localStorage.setItem("username", res.data.username)
+            frndServer.defaults.headers.common["authToken"] = res.data.token
+            window.location.href = "/profile/abc";
+        }).catch(function (err) {
+            console.error("login failed: ", err)
+        })
     }
 
     render() {
