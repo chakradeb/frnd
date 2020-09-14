@@ -34,23 +34,15 @@ func LoginHandler(logger *logrus.Logger, db db.IDBClient, appSecret string) http
 			return
 		}
 
-		ok := db.CheckUserAlreadyExists(user.Username)
-		if !ok {
+		dbUser, err := db.GetUser(user.Username)
+		if err != nil {
 			msg := fmt.Sprintf("login: db: user %s doesn't exist", user.Username)
 			logger.Error(msg)
 			lib.WriteResponse(w, msg, http.StatusUnauthorized, logger)
 			return
 		}
 
-		dbUser := db.GetUser(user.Username)
-		if dbUser.Password == "" {
-			msg := fmt.Sprintf("login: db: couldn't fetch details of user %s", user.Username)
-			logger.Error(msg)
-			lib.WriteResponse(w, msg, http.StatusInternalServerError, logger)
-			return
-		}
-
-		ok = PasswordChecker([]byte(user.Password), []byte(dbUser.Password), logger)
+		ok := PasswordChecker([]byte(user.Password), []byte(dbUser.Password), logger)
 		if !ok {
 			msg := fmt.Sprintf("login: db: password didn't match for user %s", user.Username)
 			logger.Error(msg)

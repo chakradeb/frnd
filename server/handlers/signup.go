@@ -35,8 +35,8 @@ func SignupHandler(logger *logrus.Logger, db db.IDBClient, appSecret string) htt
 			return
 		}
 
-		ok := db.CheckUserAlreadyExists(user.Username)
-		if ok {
+		_, err = db.GetUser(user.Username)
+		if err == nil {
 			msg := fmt.Sprintf("signup: db: user %s already exist", user.Username)
 			logger.Error(msg)
 			lib.WriteResponse(w, msg, http.StatusForbidden, logger)

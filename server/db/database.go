@@ -1,63 +1,60 @@
 package db
 
 import (
+	"context"
 	"fmt"
-	"strings"
 
-	"github.com/gocql/gocql"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/chakradeb/frnd-server/models"
 )
 
 type IDBClient interface {
 	CreateUser (string, string) error
-	GetUser(string) *models.User
-	CheckUserAlreadyExists (string) bool
+	GetUser(string) (*models.User, error)
 }
 
 type DB struct {
-	session *gocql.Session
+	database *mongo.Database
+	ctx context.Context
 }
 
-func New(clusterIPs []string, keyspace string) (*DB, error) {
-	cluster := gocql.NewCluster(clusterIPs[:]...)
-	cluster.Keyspace = keyspace
-	session, err := cluster.CreateSession()
+func New(dbHost string, dbPort int, dbName string) (*DB, error) {
+	connectionString := fmt.Sprintf("mongodb://%s:%d", dbHost, dbPort)
+	client, err := mongo.NewClient(options.Client().ApplyURI(connectionString))
 	if err != nil {
-		return nil, fmt.Errorf("db: connecting to \"%s\"", strings.Join(clusterIPs, ","))
+		return nil, fmt.Errorf("db: error creating client on %s", connectionString)
+	}
+
+	ctx := context.TODO()
+	err = client.Connect(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("db: unable to connect on host %s: %s", connectionString, err)
 	}
 
 	return &DB{
-		session: session,
+		database: client.Database(dbName),
+		ctx: ctx,
 	}, nil
 }
 
 func (d *DB) CreateUser(username string, password string) error {
-	return d.session.Query(
-		"INSERT INTO user_creds(username, password) VALUES (?, ?)", username, password,
-	).Exec()
+	_, err := d.database.Collection("users").InsertOne(d.ctx, bson.D{
+		{Key: "username", Value: username},
+		{Key: "password", Value: password},
+	})
+	return err
 }
 
-func (d *DB) GetUser(username string) *models.User {
+func (d *DB) GetUser(username string) (*models.User, error) {
 	user := &models.User{}
-	m := map[string]interface{}{}
-	iter := d.session.Query("SELECT * FROM user_creds Where username = ?", username).Iter()
-	for iter.MapScan(m) {
-		user.Username = m["username"].(string)
-		user.Password = m["password"].(string)
-	}
-	return user
-}
+	filter := bson.M{"username": username}
 
-func (d *DB) CheckUserAlreadyExists(username string) bool {
-	var user string
-	_ = d.session.Query(
-		`SELECT username FROM user_creds WHERE username = ? LIMIT 1`, username,
-	).Consistency(
-		gocql.One,
-	).Scan(&user)
-	if user != "" {
-		return true
+	err := d.database.Collection("users").FindOne(d.ctx, filter).Decode(user)
+	if err != nil {
+		return nil, fmt.Errorf("db: unable to get user %s: %s", username, err)
 	}
-	return false
+	return user, nil
 }

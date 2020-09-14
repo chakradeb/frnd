@@ -53,7 +53,7 @@ func TestNewWithDefaultValue(t *testing.T) {
 	conf, errs := New()
 
 	assert.Equal(t, 0, len(errs), "unexpected error while parsing")
-	assert.Equal(t, 8000, conf.AppPort, "invalid value for app port")
+	assert.Equal(t, 80, conf.AppPort, "invalid value for app port")
 	assert.Equal(t, logrus.DebugLevel, conf.LogLevel, "invalid value for log level")
 }
 
@@ -68,6 +68,6 @@ func TestConfig_ShowConfig(t *testing.T) {
 
 	fields := conf.ShowConfig()
 
-	assert.Equal(t, 8000, fields["AppPort"], "invalid field value for app port")
+	assert.Equal(t, 80, fields["AppPort"], "invalid field value for app port")
 	assert.Equal(t, logrus.ErrorLevel, fields["LogLevel"], "invalid field value for log level")
 }

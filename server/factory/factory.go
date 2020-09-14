@@ -2,7 +2,6 @@ package factory
 
 import (
 	"os"
-	"strings"
 
 	"github.com/sirupsen/logrus"
 
@@ -19,7 +18,7 @@ func New(config *config.Config) *Factory {
 	logger := createLogger(config.LogLevel)
 	return &Factory{
 		logger: logger,
-		db: createDBSession(config.Hosts, config.Keyspace, logger),
+		db: createDBSession(config.DBHost, config.DBPort, config.DBName, logger),
 	}
 }
 
@@ -31,12 +30,12 @@ func (f Factory) DB() *db.DB {
 	return f.db
 }
 
-func createDBSession(clusterIPs []string, keyspace string, logger *logrus.Logger) *db.DB {
-	dbConn, err := db.New(clusterIPs, keyspace)
+func createDBSession(dbHost string, dbPort int, dbName string, logger *logrus.Logger) *db.DB {
+	dbConn, err := db.New(dbHost, dbPort, dbName)
 	if err != nil {
 		logger.Fatalf("factory: %s", err)
 	}
-	logger.Infof("factory: connected to cluster, %s", strings.Join(clusterIPs, ","))
+	logger.Infof("factory: connected to database, %s on port %d", dbHost, dbPort)
 	return dbConn
 }
 

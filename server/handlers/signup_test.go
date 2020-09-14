@@ -53,7 +53,7 @@ func TestSignupHandler(t *testing.T) {
 
 	mockDB := &mocks.IDBClient{}
 
-	mockDB.On("CheckUserAlreadyExists", username).Return(false)
+	mockDB.On("GetUser", username).Return(&models.User{}, errors.New("no user"))
 	mockDB.On("CreateUser", username, password).Return(nil)
 
 	router := SignupHandler(logger, mockDB, appSecret)
@@ -117,7 +117,7 @@ func TestSignupHandlerWhenUserAlreadyExists(t *testing.T) {
 
 	mockDB := &mocks.IDBClient{}
 
-	mockDB.On("CheckUserAlreadyExists", username).Return(true)
+	mockDB.On("GetUser", username).Return(&models.User{}, nil)
 
 	router := SignupHandler(logger, mockDB, appSecret)
 	router.ServeHTTP(res, req)
@@ -156,7 +156,7 @@ func TestSignupHandlerWhenEncryptionError(t *testing.T) {
 
 	mockDB := &mocks.IDBClient{}
 
-	mockDB.On("CheckUserAlreadyExists", username).Return(false)
+	mockDB.On("GetUser", username).Return(&models.User{}, errors.New("no user"))
 
 	router := SignupHandler(logger, mockDB, appSecret)
 	router.ServeHTTP(res, req)
@@ -195,7 +195,7 @@ func TestSignupHandlerWhenDBError(t *testing.T) {
 
 	mockDB := &mocks.IDBClient{}
 
-	mockDB.On("CheckUserAlreadyExists", username).Return(false)
+	mockDB.On("GetUser", username).Return(&models.User{}, errors.New("no user"))
 	mockDB.On("CreateUser", username, password).Return(errors.New("db error"))
 
 	router := SignupHandler(logger, mockDB, appSecret)
@@ -238,7 +238,7 @@ func TestSignupHandlerWhenTokenCreationError(t *testing.T) {
 
 	mockDB := &mocks.IDBClient{}
 
-	mockDB.On("CheckUserAlreadyExists", username).Return(false)
+	mockDB.On("GetUser", username).Return(&models.User{}, errors.New("no user"))
 	mockDB.On("CreateUser", username, password).Return(nil)
 
 	router := SignupHandler(logger, mockDB, appSecret)

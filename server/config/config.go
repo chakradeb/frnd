@@ -3,8 +3,6 @@ package config
 import (
 	"errors"
 	"fmt"
-	"strings"
-
 	"github.com/chakradeb/env"
 	"github.com/sirupsen/logrus"
 )
@@ -12,16 +10,18 @@ import (
 type Config struct {
 	AppPort int
 	LogLevel logrus.Level
-	Hosts []string
-	Keyspace string
+	DBHost string
+	DBPort int
+	DBName string
 	AppSecret string
 }
 
 type args struct {
-	AppPort int `env:"PORT" default:"8000"`
+	AppPort int `env:"PORT" default:"80"`
 	LogLevel string `env:"LOG_LEVEL" default:"info"`
-	Hosts string `env:"DB_HOSTS"`
-	Keyspace string `env:"DB_KEYSPACE"`
+	DBHost string `env:"DB_HOST"`
+	DBPort int `env:"DB_PORT" default:"5432"`
+	DBName string `env:"DB_NAME"`
 	AppSecret string `env:"APP_SECRET"`
 }
 
@@ -55,8 +55,9 @@ func newConfig(args *args) (*Config, []error) {
 	conf := &Config{
 		AppPort: args.AppPort,
 		LogLevel: logLevel,
-		Hosts: strings.Split(args.Hosts, ","),
-		Keyspace: args.Keyspace,
+		DBHost: args.DBHost,
+		DBPort: args.DBPort,
+		DBName: args.DBName,
 		AppSecret: args.AppSecret,
 	}
 	return conf, nil
@@ -66,8 +67,9 @@ func (conf Config) ShowConfig() logrus.Fields {
 	return logrus.Fields{
 		"AppPort": conf.AppPort,
 		"LogLevel": conf.LogLevel,
-		"Hosts": conf.Hosts,
-		"Keyspace": conf.Keyspace,
+		"DBHost": conf.DBHost,
+		"DBPort": conf.DBPort,
+		"DBName": conf.DBName,
 		"AppSecret": "[SECRET]",
 	}
 }

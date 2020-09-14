@@ -51,8 +51,7 @@ func TestLoginHandler(t *testing.T) {
 
 	mockDB := &mocks.IDBClient{}
 
-	mockDB.On("CheckUserAlreadyExists", username).Return(true)
-	mockDB.On("GetUser", username).Return(user)
+	mockDB.On("GetUser", username).Return(user, nil)
 
 	router := LoginHandler(logger, mockDB, appSecret)
 	router.ServeHTTP(res, req)
@@ -109,49 +108,12 @@ func TestLoginHandlerWhenUserDoesNotExists(t *testing.T) {
 
 	mockDB := &mocks.IDBClient{}
 
-	mockDB.On("CheckUserAlreadyExists", username).Return(false)
+	mockDB.On("GetUser", username).Return(&models.User{}, errors.New("no user"))
 
 	router := LoginHandler(logger, mockDB, appSecret)
 	router.ServeHTTP(res, req)
 
 	assert.Equal(t, http.StatusUnauthorized, res.Code, "invalid response code")
-	assert.Equal(t, expectedBody, res.Body.String(), "invalid response body")
-
-	mock.AssertExpectationsForObjects(t, mockDB)
-}
-
-func TestLoginHandlerWhenDBError(t *testing.T) {
-	username := "admin"
-	password := "password"
-	appSecret := "abcdefgh"
-
-	Encrypter = func(pwd []byte) (string, error) {
-		return string(pwd), nil
-	}
-
-	user := &models.User{
-		Username: username,
-		Password: password,
-	}
-
-	logger, hook := test.NewNullLogger()
-	defer hook.Reset()
-
-	body, _ := json.Marshal(user)
-	expectedBody:= fmt.Sprintf(`"login: db: couldn't fetch details of user %s"`, user.Username)
-
-	req := httptest.NewRequest("POST", "/api/login", bytes.NewBuffer(body))
-	res := httptest.NewRecorder()
-
-	mockDB := &mocks.IDBClient{}
-
-	mockDB.On("CheckUserAlreadyExists", username).Return(true)
-	mockDB.On("GetUser", username).Return(&models.User{})
-
-	router := LoginHandler(logger, mockDB, appSecret)
-	router.ServeHTTP(res, req)
-
-	assert.Equal(t, http.StatusInternalServerError, res.Code, "invalid response code")
 	assert.Equal(t, expectedBody, res.Body.String(), "invalid response body")
 
 	mock.AssertExpectationsForObjects(t, mockDB)
@@ -182,8 +144,7 @@ func TestLoginHandlerWhenPasswordMismatch(t *testing.T) {
 
 	mockDB := &mocks.IDBClient{}
 
-	mockDB.On("CheckUserAlreadyExists", username).Return(true)
-	mockDB.On("GetUser", username).Return(user)
+	mockDB.On("GetUser", username).Return(user, nil)
 
 	router := LoginHandler(logger, mockDB, appSecret)
 	router.ServeHTTP(res, req)
@@ -222,8 +183,7 @@ func TestLoginHandlerWhenTokenCreationError(t *testing.T) {
 
 	mockDB := &mocks.IDBClient{}
 
-	mockDB.On("CheckUserAlreadyExists", username).Return(true)
-	mockDB.On("GetUser", username).Return(user)
+	mockDB.On("GetUser", username).Return(user, nil)
 
 	router := LoginHandler(logger, mockDB, appSecret)
 	router.ServeHTTP(res, req)
