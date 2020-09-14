@@ -16,8 +16,7 @@
     "react-tabs": "^3.1.1"
   },
   "scripts": {
-    "start": "APP_ENV=dev & react-scripts start",
-    "prod": "APP_ENV=prod & react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
