@@ -1,6 +1,6 @@
 import React from "react";
 
-export function RenderEmblem(followers) {
+export function Emblem(followers) {
     switch (true) {
         case (followers > Math.pow(10,8) - 1) :
             return <i className="fab fa-galactic-senate"/>;
