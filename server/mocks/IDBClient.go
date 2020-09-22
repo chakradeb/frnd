@@ -26,6 +26,29 @@ func (_m *IDBClient) CreateUser(_a0 string, _a1 string) error {
 	return r0
 }
 
+// GetProfile provides a mock function with given fields: _a0
+func (_m *IDBClient) GetProfile(_a0 string) (*models.Profile, error) {
+	ret := _m.Called(_a0)
+
+	var r0 *models.Profile
+	if rf, ok := ret.Get(0).(func(string) *models.Profile); ok {
+		r0 = rf(_a0)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Profile)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(_a0)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetUser provides a mock function with given fields: _a0
 func (_m *IDBClient) GetUser(_a0 string) (*models.User, error) {
 	ret := _m.Called(_a0)

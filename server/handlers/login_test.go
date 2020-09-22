@@ -27,7 +27,7 @@ func TestLoginHandler(t *testing.T) {
 	PasswordChecker = func(pwd, dbpwd []byte, logger *logrus.Logger) bool {
 		return true
 	}
-	TokenCreator = func(username string, t time.Time, secret string) (string, error) {
+	TokenCreator = func(username string, t time.Time, d time.Duration, secret string) (string, error) {
 		return secret, nil
 	}
 
@@ -37,7 +37,8 @@ func TestLoginHandler(t *testing.T) {
 	}
 	token := &models.Session{
 		Username: username,
-		Token: appSecret,
+		AccessToken: appSecret,
+		RefreshToken: appSecret,
 	}
 
 	logger, hook := test.NewNullLogger()
@@ -56,7 +57,7 @@ func TestLoginHandler(t *testing.T) {
 	router := LoginHandler(logger, mockDB, appSecret)
 	router.ServeHTTP(res, req)
 
-	assert.Equal(t, http.StatusOK, res.Code, "invalid response code")
+	assert.Equal(t, http.StatusCreated, res.Code, "invalid response code")
 	assert.JSONEq(t, string(expectedToken), res.Body.String(), "invalid response body")
 
 	mock.AssertExpectationsForObjects(t, mockDB)
@@ -163,7 +164,7 @@ func TestLoginHandlerWhenTokenCreationError(t *testing.T) {
 	PasswordChecker = func(pwd, dbpwd []byte, logger *logrus.Logger) bool {
 		return true
 	}
-	TokenCreator = func(username string, t time.Time, secret string) (string, error) {
+	TokenCreator = func(username string, t time.Time, d time.Duration, secret string) (string, error) {
 		return "", errors.New("unknown error")
 	}
 

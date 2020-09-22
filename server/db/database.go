@@ -14,6 +14,7 @@ import (
 type IDBClient interface {
 	CreateUser (string, string) error
 	GetUser(string) (*models.User, error)
+	GetProfile(string) (*models.Profile, error)
 }
 
 type DB struct {
@@ -45,6 +46,10 @@ func (d *DB) CreateUser(username string, password string) error {
 		{Key: "username", Value: username},
 		{Key: "password", Value: password},
 	})
+	_, err = d.database.Collection("profiles").InsertOne(d.ctx, bson.D{
+		{Key: "username", Value: username},
+		{Key: "followers", Value: 0},
+	})
 	return err
 }
 
@@ -57,4 +62,15 @@ func (d *DB) GetUser(username string) (*models.User, error) {
 		return nil, fmt.Errorf("db: unable to get user %s: %s", username, err)
 	}
 	return user, nil
+}
+
+func (d *DB) GetProfile(username string) (*models.Profile, error) {
+	profile := &models.Profile{}
+	filter := bson.M{"username": username}
+
+	err := d.database.Collection("profiles").FindOne(d.ctx, filter).Decode(profile)
+	if err != nil {
+		return nil, fmt.Errorf("db: unable to get profile %s: %s", username, err)
+	}
+	return profile, nil
 }

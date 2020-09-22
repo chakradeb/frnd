@@ -8,7 +8,7 @@ import SignupPage from "../pages/signup";
 
 class LandingPage extends Component {
     componentDidMount() {
-        if(localStorage.getItem("authToken")) window.location.href = "/";
+        if(localStorage.getItem("X-AUTH-TOKEN")) window.location.href = "/";
     }
 
     render() {

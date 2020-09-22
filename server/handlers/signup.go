@@ -8,6 +8,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/chakradeb/frnd-server/constants"
 	"github.com/chakradeb/frnd-server/db"
 	"github.com/chakradeb/frnd-server/lib"
 	"github.com/chakradeb/frnd-server/models"
@@ -59,15 +60,23 @@ func SignupHandler(logger *logrus.Logger, db db.IDBClient, appSecret string) htt
 			return
 		}
 
-		token, err := TokenCreator(user.Username, time.Now(), appSecret)
+		accessToken, err := TokenCreator(user.Username, time.Now(), constants.ACCESS_TOKEN_LIVE_TIME, appSecret)
 		if err != nil {
-			msg := fmt.Sprintf("signup: create token: not able to sign token: %s", err)
+			msg := fmt.Sprintf("signup: create access token: not able to sign token: %s", err)
 			logger.Error(msg)
 			lib.WriteResponse(w, msg, http.StatusInternalServerError, logger)
 			return
 		}
 
-		session := models.Session{Username: user.Username, Token: token}
+		refreshToken, err := TokenCreator("", time.Now(), constants.REFRESH_TOKEN_LIVE_TIME, appSecret)
+		if err != nil {
+			msg := fmt.Sprintf("signup: create refresh token: not able to sign token: %s", err)
+			logger.Error(msg)
+			lib.WriteResponse(w, msg, http.StatusInternalServerError, logger)
+			return
+		}
+
+		session := models.Session{Username: user.Username, AccessToken: accessToken, RefreshToken: refreshToken}
 		lib.WriteResponse(w, session, http.StatusCreated, logger)
 		return
 	}

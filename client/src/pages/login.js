@@ -21,10 +21,10 @@ class LoginPage extends Component {
                 "Content-Type": "application/json",
             }
         }).then(function (res) {
-            localStorage.setItem("authToken", res.data.token)
+            localStorage.setItem("X-AUTH-TOKEN", res.data.accessToken)
+            localStorage.setItem("X-REFRESH-TOKEN", res.data.refreshToken)
             localStorage.setItem("username", res.data.username)
-            frndServer.defaults.headers.common["authToken"] = res.data.token
-            window.location.href = "/profile/abc";
+            window.location.href = `/profile/${res.data.username}`;
         }).catch(function (err) {
             console.error("login failed: ", err)
         })

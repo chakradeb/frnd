@@ -8,12 +8,12 @@ import (
 	"github.com/chakradeb/frnd-server/models"
 )
 
-func CreateToken(username string, t time.Time, secret string) (string, error) {
+func CreateToken(username string, createTime time.Time, liveTime time.Duration, secret string) (string, error) {
 	claim := &models.Claims{
 		Username: username,
 		StandardClaims: &jwt.StandardClaims{
-			ExpiresAt: t.Add(time.Minute * 1).Unix(),
-			IssuedAt:  t.Unix(),
+			ExpiresAt: createTime.Add(liveTime).Unix(),
+			IssuedAt:  createTime.Unix(),
 		},
 	}
 

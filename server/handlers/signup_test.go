@@ -27,7 +27,7 @@ func TestSignupHandler(t *testing.T) {
 	Encrypter = func(pwd []byte) (string, error) {
 		return string(pwd), nil
 	}
-	TokenCreator = func(username string, t time.Time, secret string) (string, error) {
+	TokenCreator = func(username string, t time.Time, d time.Duration, secret string) (string, error) {
 		return secret, nil
 	}
 
@@ -39,7 +39,8 @@ func TestSignupHandler(t *testing.T) {
 	}
 	token := &models.Session{
 		Username: username,
-		Token: appSecret,
+		AccessToken: appSecret,
+		RefreshToken: appSecret,
 	}
 
 	logger, hook := test.NewNullLogger()
@@ -216,7 +217,7 @@ func TestSignupHandlerWhenTokenCreationError(t *testing.T) {
 	Encrypter = func(pwd []byte) (string, error) {
 		return string(pwd), nil
 	}
-	TokenCreator = func(username string, t time.Time, secret string) (string, error) {
+	TokenCreator = func(username string, t time.Time, d time.Duration, secret string) (string, error) {
 		return "", errors.New("unknown error")
 	}
 
@@ -231,7 +232,7 @@ func TestSignupHandlerWhenTokenCreationError(t *testing.T) {
 	defer hook.Reset()
 
 	body, _ := json.Marshal(user)
-	expectedBody := `"signup: create token: not able to sign token: unknown error"`
+	expectedBody := `"signup: create access token: not able to sign token: unknown error"`
 
 	req := httptest.NewRequest("POST", "/api/signup", bytes.NewBuffer(body))
 	res := httptest.NewRecorder()

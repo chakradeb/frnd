@@ -10,8 +10,8 @@ import PrivateRoute from "./components/PrivateRoute";
 export default (
     <Switch>
         <Route path="/login"> <LoginAndSignup/> </Route>
-        <PrivateRoute path="/" exact> <Home/> </PrivateRoute>
         <PrivateRoute path="/profile/:id"> <Profile/> </PrivateRoute>
+        <PrivateRoute path="/" exact> <Home/> </PrivateRoute>
         <Route path="*"> <Page404 /> </Route>
     </Switch>
 );
