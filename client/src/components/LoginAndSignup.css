@@ -1,3 +1,80 @@
-.container {
+body {
+    background: #718493;
+}
+
+.tab {
+    width: auto;
+    height: 40vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tab h1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+@media only screen and (min-width: 451px) {
+    .form-content {
+        width: 25%;
+        height: auto;
+        margin: 0 auto;
+        position: relative;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    .form-content {
+        width: 80%;
+        height: auto;
+        margin: 0 auto;
+        position: relative;
+    }
+}
+
+.nav {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.nav-pills {
+    width: 100%;
+}
+
+.nav-item {
+    width: 50%;
+}
+
+.nav-pills .nav-link {
+    margin: 0;
+    font-weight: bold;
+    padding: 10% 0;
     text-align: center;
+    background: #404143;
+    color: #fff;
+    border-radius: 30px;
+    height: 100px;
+}
+
+.react-tabs__tab--selected .nav-link {
+    background: #fff;
+    color: #000;
+}
+
+.tab-content {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    margin-top: -10%;
+    background: #fff;
+    color: #000;
+    border-radius: 5px 5px 30px 30px;
+    z-index: 1000;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.4);
+    padding: 30px;
 }

@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 
-import 'react-tabs/style/react-tabs.css';
 import './LoginAndSignup.css';
 
 import LoginPage from "../pages/login";
@@ -14,22 +13,29 @@ class LandingPage extends Component {
 
     render() {
         return (
-            <div className="container">
-                <h1>Welcome!</h1>
-                <Tabs>
-                    <TabList>
-                        <Tab>Login</Tab>
-                        <Tab>Sign Up</Tab>
+            <React.Fragment>
+                <div className="tab">
+                <Tabs className="form-content">
+                    <TabList className="nav nav-pills">
+                        <Tab className="nav-item">
+                            <div className="nav-link">Login</div>
+                        </Tab>
+                        <Tab className="nav-item">
+                            <div className="nav-link">Sign Up</div>
+                        </Tab>
                     </TabList>
 
-                    <TabPanel>
-                        <LoginPage/>
-                    </TabPanel>
-                    <TabPanel>
-                        <SignupPage/>
-                    </TabPanel>
+                    <div className="tab-content">
+                        <TabPanel>
+                            <LoginPage/>
+                        </TabPanel>
+                        <TabPanel>
+                            <SignupPage/>
+                        </TabPanel>
+                    </div>
                 </Tabs>
-            </div>
+                </div>
+            </React.Fragment>
         )
     }
 }

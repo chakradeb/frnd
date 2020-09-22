@@ -2,12 +2,16 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import routes from "./routes";
+import Header from "./components/Header";
 
 const App = function () {
   return (
-      <Router>
-        {routes}
-      </Router>
+      <React.Fragment>
+          <Header/>
+          <Router>
+              {routes}
+          </Router>
+      </React.Fragment>
   )
 };
 

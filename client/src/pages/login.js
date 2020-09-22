@@ -33,25 +33,33 @@ class LoginPage extends Component {
     render() {
         return (
             <div>
-                <h1>Login Page</h1>
-                <input
-                    id="username"
-                    placeholder="enter your username"
-                    required={true}
-                    onChange={
-                        (e) => this.setState({username: e.target.value})
-                    }
-                />
-                <input
-                    id="password"
-                    type="password"
-                    placeholder="enter your password"
-                    required={true}
-                    onChange={
-                        (e) => this.setState({password: e.target.value})
-                    }
-                />
-                <button onClick={this.submitAction}>Submit</button>
+                <div className="form-group">
+                    <label>Username</label>
+                    <input
+                        className="form-control is-valid"
+                        id="username"
+                        placeholder="enter your username"
+                        required={true}
+                        onChange={
+                            (e) => this.setState({username: e.target.value})
+                        }
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Password</label>
+                    <input
+                        className="form-control is-valid"
+                        id="password"
+                        type="password"
+                        placeholder="enter your password"
+                        required={true}
+                        onChange={
+                            (e) => this.setState({password: e.target.value})
+                        }
+                    />
+                </div>
+                <button className="btn btn-primary" style={{ backgroundColor: "#030406" }} onClick={this.submitAction}>Submit</button>
             </div>
         )
     }
