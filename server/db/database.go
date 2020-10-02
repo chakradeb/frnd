@@ -31,6 +31,7 @@ func New(dbHost string, dbPort int, dbName string) (*DB, error) {
 
 	ctx := context.TODO()
 	err = client.Connect(ctx)
+	defer client.Disconnect(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("db: unable to connect on host %s: %s", connectionString, err)
 	}

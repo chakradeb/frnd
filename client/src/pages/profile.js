@@ -30,12 +30,27 @@ class Profile extends Component {
             })
     }
 
+    isSameUser() {
+        return this.state.username === window.localStorage.getItem("username")
+    }
+
     followUser() {
         window.alert(`You are following ${this.state.username} now`)
     }
 
     messageUser() {
         window.alert(`You've messaged ${this.state.username} "Hi"`)
+    }
+
+    renderInteractions() {
+        if(!this.isSameUser()){
+            return (
+                <div>
+                    <button onClick={this.followUser}>Follow</button>
+                    <button onClick={this.messageUser}>Message</button>
+                </div>
+            )
+        }
     }
 
     render() {
@@ -47,11 +62,8 @@ class Profile extends Component {
                     {Emblem(this.state.followers)}
                 </div>
                 <h3>| {this.state.username} |</h3>
-                <b>Followers:</b>{this.state.followers}
-                <div>
-                    <button onClick={this.followUser}>Follow</button>
-                    <button onClick={this.messageUser}>Message</button>
-                </div>
+                <b>Followers:</b>{new Intl.NumberFormat('en-US', { maximumFractionDigits: 1,notation: "compact" , compactDisplay: "short" }).format(this.state.followers)}
+                {this.renderInteractions()}
             </div>
         )
     }
